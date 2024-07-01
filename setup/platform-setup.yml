@@ -1,0 +1,44 @@
+---
+
+- name: Trusted Platform Setup
+#  become: true
+  become: yes
+  become_method: sudo
+  hosts: localhost
+  vars:
+    appenv: dev
+    binary: trusted-platform
+    hostname: localhost
+    platform_dir: trusted-data
+    config_dir: trusted-data/etc
+    log_dir: trusted-data/log
+    ca_dir: trusted-data/ca
+    platform_build_dir: trusted-data/build
+    luks_device: /dev/loop0
+    luks_name: trusted-platform
+    luks_keyfile: luks.key
+    owner: 
+    # firewall_state: started
+    # firewall_enabled_at_boot: true
+    # firewall_allowed_tcp_ports:
+    #   - "22"
+    #   - "80"
+    #   - "443"
+
+  environment:
+    PLATFORM_DIR: "{{ platform_dir }}"
+    CONFIG_DIR: "{{ config_dir }}"
+    LOG_DIR: "{{ log_dir }}"
+    CA_DIR: "{{ ca_dir }}"
+
+  roles:
+    - role: common
+      build_dir: "{{ platform_build_dir }}"
+
+    - yubico
+
+    - role: tpm2-pkcs11
+      platform_dir: "{{ platform_dir }}"
+      build_dir: "{{ platform_build_dir }}"
+      source_repo: https://github.com/tpm2-software/tpm2-pkcs11.git
+      source_version: tags/1.9.0

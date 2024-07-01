@@ -1,0 +1,6 @@
+---
+
+apt_install_packages: [
+  "yubikey-manager",
+  "libu2f-udev",
+]

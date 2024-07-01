@@ -1,0 +1,24 @@
+---
+
+pip_package: pip
+pip_executable: "{{ 'pip3' if pip_package.startswith('python3') else 'pip' }}"
+pip_install_packages: [
+  "bcrypt",
+  "cryptography>=3.0",
+  "pyyaml",
+  "pyasn1",
+  "pyasn1_modules",
+  "tpm2_pytss",
+]
+
+# https://github.com/Infineon/pkcs11-optiga-tpm/tree/main/fapi-backend
+apt_install_packages: [
+  "autoconf",
+  "build-essential",
+  "libyaml-dev",
+  # "libtpm2-esapi",
+]
+
+build_dir: ./
+source_repo: https://github.com/tpm2-software/tpm2-pkcs11.git
+source_version: tags/1.9.0

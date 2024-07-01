@@ -1,0 +1,21 @@
+---
+
+- name: Install common platform utilities
+  ansible.builtin.apt:
+    name: "{{ item | default(omit) }}"
+    state: present
+  with_items: "{{ apt_install_packages }}"
+
+- name: Create Platform build Directory
+  file:
+    path: "{{ build_dir }}"
+    state: directory
+    owner: root
+    mode: 0755
+
+- name: Create Platform lib Directory
+  file:
+    path: "{{ platform_dir }}/lib"
+    state: directory
+    owner: root
+    mode: 0755

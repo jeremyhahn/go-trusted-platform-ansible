@@ -1,0 +1,5 @@
+---
+
+luks_device: /dev/mapper/trusted-platform
+luks_name: trusted-platform
+luks_keyfile: luks.key

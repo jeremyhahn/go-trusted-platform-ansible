@@ -1,0 +1,85 @@
+---
+
+- name: Ensure pip_install_packages are installed.
+  pip:
+    name: "{{ pip_install_packages }}"
+    version: "{{ item.version | default(omit) }}"
+    virtualenv: "{{ item.virtualenv | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+    executable: "{{ pip_executable }}"
+  with_items: "{{ pip_install_packages }}"
+
+- name: Install tpm2-pkcs11 APT packages 
+  ansible.builtin.apt:
+    name: "{{ item | default(omit) }}"
+    state: present
+  with_items: "{{ apt_install_packages }}"
+
+- name: Create tpm2-pkcs11 Build Directory
+  file:
+    path: "{{ build_dir }}/tpm2-pkcs11"
+    state: directory
+    owner: root
+    mode: 0755
+
+
+# - name: Download tpm2-pkcs11
+#   ansible.builtin.unarchive:
+#     src: https://github.com/tpm2-software/tpm2-pkcs11/releases/download/1.9.0/tpm2-pkcs11-1.9.0.tar.gz
+#     dest: "{{ build_dir }}/tpm2-pkcs11"
+#     remote_src: yes
+
+
+- name: Cloning tpm2-pkcs11 git repository
+  ansible.builtin.git:
+    repo: "{{ source_repo }}"
+    dest: "{{ build_dir }}/tpm2-pkcs11"
+    version: "{{ source_version }}"
+
+- name: Run tpm2-pkcs11 bootstrap
+  ansible.builtin.command: "./bootstrap"
+  args:
+    chdir: "{{ build_dir }}/tpm2-pkcs11"
+    creates: /usr/local/lib/libtpm2_pkcs11.so
+
+- name: Run tpm2-pkcs11 configure
+  ansible.builtin.command: "./configure"
+  args:
+    chdir: "{{ build_dir }}/tpm2-pkcs11"
+    creates: /usr/local/lib/libtpm2_pkcs11.so
+
+- name: Run tpm2-pkcs11 make
+  ansible.builtin.command: "make"
+  args:
+    chdir: "{{ build_dir }}/tpm2-pkcs11"
+    creates: /usr/local/lib/libtpm2_pkcs11.so
+
+- name: Run tpm2-pkcs11 make install
+  ansible.builtin.command: "make install"
+  args:
+    chdir: "{{ build_dir }}/tpm2-pkcs11"
+    creates: /usr/local/lib/libtpm2_pkcs11.so
+
+- name: Ensure tpm2-pkcs11 Shared Object Exists
+  stat:
+    path: /usr/local/lib/libtpm2_pkcs11.so
+
+# - name: Copy file with owner and permissions
+#   ansible.builtin.copy:
+#     src: /usr/local/lib/libtpm2_pkcs11.so.0.0.0
+#     dest: "{{ platform-dir}}/lib/libtpm2_pkcs11.so"
+#     owner: foo
+#     group: foo
+#     mode: '0644'
+
+# - name: Run tpm2-pkcs11 tools pip install
+#   ansible.builtin.command: "pip install ."
+#   args:
+#     chdir: "{{ build_dir }}/tpm2-pkcs11/tools"
+#     #creates: /usr/local/lib/libtpm2_pkcs11.so
+
+# - name: Run tpm2-pkcs11 tools easy_install
+#   ansible.builtin.command: "easy_install setup.py"
+#   args:
+#     chdir: "{{ build_dir }}/tpm2-pkcs11/tools"
+#     #creates: /usr/local/lib/libtpm2_pkcs11.so

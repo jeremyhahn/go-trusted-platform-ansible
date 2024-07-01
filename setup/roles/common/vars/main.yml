@@ -1,0 +1,21 @@
+---
+
+common_packages: []
+
+pip_package: pip
+pip_executable: "{{ 'pip3' if pip_package.startswith('python3') else 'pip' }}"
+pip_install_packages: [
+  "poetry"
+]
+
+# https://github.com/Infineon/pkcs11-optiga-tpm/tree/main/fapi-backend
+apt_install_packages: [
+  "cryptsetup",
+  "tss2",
+  "tpm2-tools",
+  "softhsm",
+  "libsofthsm2",
+  "opensc",
+]
+
+build_dir: ./
