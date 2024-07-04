@@ -1,0 +1,8 @@
+---
+
+- name: Cloning Raspberry PI Firmware Repository
+  ansible.builtin.git:
+    repo: "{{ firmware_git_repo }}"
+    dest: "{{ build_dir }}/firmware"
+    version: "{{ firmware_version }}"
+    depth: 1

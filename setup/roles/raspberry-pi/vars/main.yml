@@ -1,0 +1,5 @@
+---
+
+build_dir: build
+firmware_git_repo: https://github.com/raspberrypi/firmware.git
+firmware_version: tags/1.20240529
